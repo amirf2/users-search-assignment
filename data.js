@@ -119,33 +119,40 @@ function addUserToParitalNameTrie(user,splittedNames){
 
 
 function getUserByID(id){
+    let ans = [];
     id=id.toLowerCase();
-    const ans = usersListByID.get(id);
-    return ans? ans : {};
+    ans = usersListByID.get(id);
+    return [...ans.values()];
 }
 
 
 function getUsersByCountry(country){
+    let ans = [];
     country=country.toLowerCase();
-    const ans = usersListByCountry.get(country);
-    return ans? [...ans.values()] : [];
+    ans = usersListByCountry.get(country);
+    return [...ans.values()];
 }
 
 
 function getUsersByName(name){
+    let ans = [];
     name=name.toLowerCase();
     const splittedNames = name.split(' ').filter(name => name.length>0);
     if (splittedNames.length<=2){
         if (splittedNames.length===2){
             const fullName = splittedNames.join(' ');
-            return usersListByName.get(fullName);
+            ans = usersListByName.get(fullName);
         } else if(splittedNames.length===1) {
             const [partialName] = splittedNames;
             if (usersListByName.has(partialName)){
-                return usersListByName.get(partialName);
-            } else return getUsersByPrefixName(usersListByName, partialName);
+                ans = usersListByName.get(partialName);
+            } else {
+                ans = getUsersByPrefixName(usersListByName, partialName);
+            }
         }
     }
+    console.log([...ans.values()]);
+    return [...ans.values()]
 }
 
 function getUsersByPrefixName(firstCharNameList, partialName){
@@ -154,9 +161,6 @@ function getUsersByPrefixName(firstCharNameList, partialName){
     if (partialName.length>=3){
         for (const name of prefixNames){
             const nameMap = usersListByName.get(name);
-            // if (nameMap===undefined){
-            //     console.log("getUsersByPrefixName problem");
-            // }
             for (const [userID, user] of nameMap){
                 if (!ans.has(userID)){
                     ans.set(userID,user);
@@ -166,7 +170,6 @@ function getUsersByPrefixName(firstCharNameList, partialName){
     }
     return ans;
 }
-
 
 
 function getUsersByAge(age){
