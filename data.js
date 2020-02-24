@@ -25,10 +25,12 @@ function init(initServer){
         mapHeaders: ({ header, index }) => header.toLowerCase()
     }))
     .on('data', (user) => {
-        addUserToIDList(user);
-        addUserToCountryList(user)
-        addUserToNameLists(user);
-        addUserToAgeList(user);
+        if (Object.entries(user).length > 0){
+            addUserToIDList(user);
+            addUserToCountryList(user)
+            addUserToNameLists(user);
+            addUserToAgeList(user);
+        }
     }).on('end', () => {
         console.log("Data Initialization.. finished");
         initServer();
