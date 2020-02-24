@@ -121,16 +121,15 @@ function addUserToParitalNameTrie(user,splittedNames){
 
 function getUserByID(id){
     id=id.toLowerCase();
-    ans = usersListByID.get(id);
+    const ans = usersListByID.get(id);
     return ans? ans : {};
 }
 
 
 function getUsersByCountry(country){
-    let ans = [];
     country=country.toLowerCase();
-    ans = usersListByCountry.get(country);
-    return [...ans.values()];
+    const ans = usersListByCountry.get(country);
+    return ans? [...ans.values()] : [];
 }
 
 
@@ -151,7 +150,7 @@ function getUsersByName(name){
             }
         }
     }
-    return [...ans.values()]
+    return ans? [...ans.values()] : [];
 }
 
 function getUsersByPrefixName(firstCharNameList, partialName){
