@@ -150,7 +150,6 @@ function getUsersByName(name){
             }
         }
     }
-    console.log([...ans.values()]);
     return [...ans.values()]
 }
 
