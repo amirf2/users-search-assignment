@@ -42,6 +42,7 @@ function initMapIfNotExist(map, field){
     }
 }
 
+
 function initDateIfNotExist(day, month, year){
     if (!usersListByDateOfBirth.has(year)){
         usersListByDateOfBirth.set(year, new Map());
@@ -272,7 +273,7 @@ function dateIterator(ans, dateMap, date, index){
             (monthMap, monthIndex) => {
                 monthMap.forEach(
                     (day, dayIndex) => {
-                        if (dateComparisonCondition(monthIndex, dateMonth, dayIndex, dayDate, index)){
+                        if (dateComparisonCondition([monthIndex, dateMonth, dayIndex, dayDate], index)){
                             ans.push(...day.values());
                         }
                     }
@@ -282,15 +283,24 @@ function dateIterator(ans, dateMap, date, index){
     }
 }
 
-function dateComparisonCondition(monthIndex, dateMonth, dayIndex, dayDate, index){
+function dateComparisonCondition(dateArgs, index){
+    const dateArgsAsIntegers = convertDateArgsFromStrToNum(dateArgs);
+    const [monthIndex, dateMonth, dayIndex, dayDate] = dateArgsAsIntegers;
     if (index==="first"){
-        return (monthIndex>dateMonth || monthIndex===dateMonth && dayIndex>= dayDate);
+        return (monthIndex>dateMonth || monthIndex===dateMonth && dayIndex >dayDate);
     } else if (index==="last"){
         return (monthIndex<dateMonth || monthIndex===dateMonth && dayIndex<= dayDate);
     } else {
-        console.log("wrong input for comparing date conditions")
+        console.log("Something is wrong with dateComparisonCondition");
         return false;
     }
+}
+
+
+function convertDateArgsFromStrToNum(dateArgs){
+    return dateArgs.map(
+        (arg) => {return parseInt(arg);}
+        );
 }
 
 
