@@ -119,10 +119,9 @@ function addUserToParitalNameTrie(user,splittedNames){
 
 
 function getUserByID(id){
-    let ans = [];
     id=id.toLowerCase();
     ans = usersListByID.get(id);
-    return [...ans.values()];
+    return ans? ans : {};
 }
 
 
