@@ -1,4 +1,19 @@
 <h1>Implementation Details</h1>
+
+To implement this assignment, I used node.js, alongside a few other npm packages, for parsing the CSV file. Since no external database was required/allowed, I loaded all the data to the main memory, using Map and a Prefix Trie as my data structures, in order to get the best asymptotic runtime for the required API.
+
+## getting users by id/country:
+I used JS Map with id/country as keys.
+
+## getting users by age:
+I used JS Map with the year, month and day of the user's dob as keys. Also, I used the javascript date object to determine the required dates for the age we are looking for from the GET request.
+
+## getting user by name:
+I used JS Map with full names and first/last names as keys. Also, I used trie to add the first/last names prefixes, so we can know which keys to retrieve from the userMapByName.
+
+## delete user by id:
+I retrieve all user info (name, country, dob) from the userMapByID and then remove all other references from the other data structures.
+
 <p>To implement this assignment, I used node.js, alongside a few other npm packages, for parsing the CSV file. Since no external database was required/allowed, I loaded all the data to the main memory, using Map and a Prefix Trie as my data structures, in order to get the best asymptotic runtime for the required API.</p>
 <h1><a id="user-content-time-and-space-complexity-analysis" class="anchor" aria-hidden="true" href="#time-and-space-complexity-analysis"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Time And Space Complexity Analysis</h1>
 <h2><a id="user-content-runtime-complexity" class="anchor" aria-hidden="true" href="#runtime-complexity"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Runtime Complexity:</h2>
