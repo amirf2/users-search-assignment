@@ -287,9 +287,9 @@ function dateComparisonCondition(dateArgs, index){
     const dateArgsAsIntegers = convertDateArgsFromStrToNum(dateArgs);
     const [monthIndex, dateMonth, dayIndex, dayDate] = dateArgsAsIntegers;
     if (index==="first"){
-        return (monthIndex>dateMonth || monthIndex===dateMonth && dayIndex >dayDate);
+        return (monthIndex>dateMonth || monthIndex===dateMonth && dayIndex > dayDate);
     } else if (index==="last"){
-        return (monthIndex<dateMonth || monthIndex===dateMonth && dayIndex<= dayDate);
+        return (monthIndex<dateMonth || monthIndex===dateMonth && dayIndex <= dayDate);
     } else {
         console.log("Something is wrong with dateComparisonCondition");
         return false;
