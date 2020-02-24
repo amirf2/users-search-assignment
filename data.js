@@ -2,11 +2,10 @@ const fs = require('fs');
 const csv = require('csv-parser');
 var Trie = require('trie-prefix-tree');
 
-
-const usersListByCountry = new Map();
-const usersListByID = new Map();
-const usersListByName = new Map();
-const usersListByDateOfBirth = new Map();
+const usersMapByCountry = new Map();
+const usersMapByID = new Map();
+const usersMapByName = new Map();
+const usersMapByDateOfBirth = new Map();
 const usersTrieByPartialNames = new Trie([]);
 
 const MAX_AGE = 125;
@@ -46,10 +45,10 @@ function initMapIfNotExist(map, field){
 
 
 function initDateIfNotExist(day, month, year){
-    if (!usersListByDateOfBirth.has(year)){
-        usersListByDateOfBirth.set(year, new Map());
+    if (!usersMapByDateOfBirth.has(year)){
+        usersMapByDateOfBirth.set(year, new Map());
     }
-    const yearMap = usersListByDateOfBirth.get(year);
+    const yearMap = usersMapByDateOfBirth.get(year);
     if (!yearMap.has(month)){
         yearMap.set(month, new Map());
     }
@@ -67,14 +66,14 @@ function initDateIfNotExist(day, month, year){
 
  
 function addUserToIDList(user){
-    usersListByID.set(user.id,user);
+    usersMapByID.set(user.id,user);
 }
 
 
 function addUserToCountryList(user){
     const country = user.country.toLowerCase();
-    initMapIfNotExist(usersListByCountry,country);
-    usersListByCountry.get(country).set(user.id,user);
+    initMapIfNotExist(usersMapByCountry,country);
+    usersMapByCountry.get(country).set(user.id,user);
 }
 
 
@@ -83,7 +82,7 @@ function addUserToAgeList(user){
     const birthdayDate = birthday.split('/');
     const [day,month,year] = birthdayDate;
     initDateIfNotExist(day, month ,year);
-    usersListByDateOfBirth.get(year).get(month).get(day).set(user.id,user);
+    usersMapByDateOfBirth.get(year).get(month).get(day).set(user.id,user);
 }
 
 
@@ -95,14 +94,14 @@ function addUserToNameLists(user){
 }
 
 function addUserToFullNameList(user ,fullName, splittedNames){
-    initMapIfNotExist(usersListByName,fullName);
-    usersListByName.get(fullName).set(user.id,user);
+    initMapIfNotExist(usersMapByName,fullName);
+    usersMapByName.get(fullName).set(user.id,user);
     const [firstName, lastName] = splittedNames;
-    initMapIfNotExist(usersListByName,firstName);
-    usersListByName.get(firstName).set(user.id,user);
+    initMapIfNotExist(usersMapByName,firstName);
+    usersMapByName.get(firstName).set(user.id,user);
     if (firstName!=lastName){
-        initMapIfNotExist(usersListByName,lastName);
-        usersListByName.get(lastName).set(user.id,user);
+        initMapIfNotExist(usersMapByName,lastName);
+        usersMapByName.get(lastName).set(user.id,user);
     }
 }
 
@@ -123,14 +122,14 @@ function addUserToParitalNameTrie(user,splittedNames){
 
 function getUserByID(id){
     id=id.toLowerCase();
-    const ans = usersListByID.get(id);
+    const ans = usersMapByID.get(id);
     return ans? ans : {};
 }
 
 
 function getUsersByCountry(country){
     country=country.toLowerCase();
-    const ans = usersListByCountry.get(country);
+    const ans = usersMapByCountry.get(country);
     return ans? [...ans.values()] : [];
 }
 
@@ -142,13 +141,13 @@ function getUsersByName(name){
     if (splittedNames.length<=2){
         if (splittedNames.length===2){
             const fullName = splittedNames.join(' ');
-            ans = usersListByName.get(fullName);
+            ans = usersMapByName.get(fullName);
         } else if(splittedNames.length===1) {
             const [partialName] = splittedNames;
-            if (usersListByName.has(partialName)){
-                ans = usersListByName.get(partialName);
+            if (usersMapByName.has(partialName)){
+                ans = usersMapByName.get(partialName);
             } else {
-                ans = getUsersByPrefixName(usersListByName, partialName);
+                ans = getUsersByPrefixName(usersMapByName, partialName);
             }
         }
     }
@@ -160,7 +159,7 @@ function getUsersByPrefixName(firstCharNameList, partialName){
     const ans = new Map();
     if (partialName.length>=3){
         for (const name of prefixNames){
-            const nameMap = usersListByName.get(name);
+            const nameMap = usersMapByName.get(name);
             for (const [userID, user] of nameMap){
                 if (!ans.has(userID)){
                     ans.set(userID,user);
@@ -178,9 +177,9 @@ function getUsersByAge(age){
         const lastDate = new Date();
         setTimeGapAndYearOfBirthDay(lastDate,age);
         const firstDate = setFirstDate(lastDate);
-        const firstDateYearMap = usersListByDateOfBirth.get(firstDate.getFullYear().toString());
+        const firstDateYearMap = usersMapByDateOfBirth.get(firstDate.getFullYear().toString());
         dateIterator(ans,firstDateYearMap,dateNumbersToStrings(firstDate),"first");
-        const lastDateYearMap = usersListByDateOfBirth.get(lastDate.getFullYear().toString());
+        const lastDateYearMap = usersMapByDateOfBirth.get(lastDate.getFullYear().toString());
         dateIterator(ans,lastDateYearMap,dateNumbersToStrings(lastDate),"last");
     }
     return ans;
@@ -193,7 +192,7 @@ function getUsersByAge(age){
 
 function deleteUser(id){
     id=id.toLowerCase();
-    const user = usersListByID.get(id);
+    const user = usersMapByID.get(id);
     if (user){
         const {name,dob,country} = user;
         deleteFromUsersListByID(id);
@@ -205,7 +204,7 @@ function deleteUser(id){
 
 
 function deleteFromUsersListByCountry(id,country){
-    const countryList = usersListByCountry.get(country)
+    const countryList = usersMapByCountry.get(country)
     if (countryList){
         countryList.delete(id);
     }
@@ -213,17 +212,17 @@ function deleteFromUsersListByCountry(id,country){
 
 
 function deleteFromUsersListByID(id){
-    usersListByID.delete(id);
+    usersMapByID.delete(id);
 }
 
 
 function deleteFromUsersListByFullOrSingleName(id, names){
     const SINGLE_NAME_INDEX = 1;
     names.forEach((name, index) => {
-        const nameMap = usersListByName.get(name);
+        const nameMap = usersMapByName.get(name);
         nameMap.delete(id);
         if (nameMap.size===0){
-            usersListByName.delete(name);
+            usersMapByName.delete(name);
             if (index>=SINGLE_NAME_INDEX){
                 usersTrieByPartialNames.removeWord(name);
             }
@@ -241,7 +240,7 @@ function deleteFromUsersListByNames(id,fullName){
 function deleteFromUsersListByDateOfBirth(id,dob){
     const birthdayDate = dob.split('/');
     const [day,month,year] = birthdayDate;
-    usersListByDateOfBirth.get(year).get(month).get(day).delete(id);
+    usersMapByDateOfBirth.get(year).get(month).get(day).delete(id);
 }
 
 
